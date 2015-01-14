@@ -1,7 +1,8 @@
 var assert = require('assert')
 var gitTag = require('../')()
-console.log(gitTag)
 
-// assert.ok(human.head === true)
-
-// console.log('test ok.')
+gitTag.latest(function(res){
+	console.log(arguments)
+	assert.ok(typeof res === 'string')
+	console.log('test ok')
+})

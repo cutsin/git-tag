@@ -5,7 +5,7 @@ var exec = require('child_process').exec
 
 var getTags = function(cb) {
   exec('git tag -l', function(err, res){
-    if (err) cb([])
+    if (err || !res.length) return cb([])
     res = res.replace(/^\s+|\s+$/g,'').split(/\n/)
     cb(err ? [] : res)
   })
@@ -22,7 +22,7 @@ module.exports = function() {
   var Tag = {
     create: create,
     all: function(cb) {
-      if (tags.length) return tags
+      if (tags.length) return cb(tags)
       getTags(function(res){
         tags = res
         cb(tags)
@@ -30,7 +30,7 @@ module.exports = function() {
     },
     latest: function(cb) {
       var len = tags.length
-      if (len) return tags[len-1]
+      if (len) return cb(tags[len-1])
       getTags(function(res){
         tags = res
         cb(tags[tags.length-1])
