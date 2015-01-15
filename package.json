@@ -1,7 +1,7 @@
 {
   "name": "git-tag",
   "version": "0.0.1",
-  "description": "simply command <'git tag'> wrapper",
+  "description": "simply command 'git tag' wrapper",
   "main": "index.js",
   "scripts": {
     "test": "node test"
