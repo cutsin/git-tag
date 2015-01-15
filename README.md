@@ -9,21 +9,30 @@
 ```
 npm install git-tag
 ```
-
 ## Usage
 
 ```javascript
-var gitag = require('git-tag')()
-console.log(gitag)
-// >> json object {}
-```
-With cache:
-```javascript
-var json = require('git-tag')('./foo.yml', true)
-```
-Disable cache if `NODE_ENV=production`:
-```javascript
-var json = require('git-tag')('./foo.yaml', false)
+var gitTag = require('git-tag')({localOnly:true})
+
+// create a tag
+gitTag.create('0.0.2015', 'just a message',function(res){
+	console.log(res) // >> 0.0.2015
+})
+
+// remove a tag
+gitTag.remove('0.0.2015', function(res){
+	console.log(res) // >> 0.0.2015
+})
+
+// get a latest tag
+gitTag.latest(function(res){
+	console.log(res) // >> 0.0.2015
+})
+
+// get all tags
+gitTag.all(function(res){
+	console.log(res) // >> ['0.0.2015']
+})
 ```
 
 

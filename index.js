@@ -3,37 +3,52 @@
 var fs = require('fs')
 var exec = require('child_process').exec
 
-var getTags = function(cb) {
-  exec('git tag -l', function(err, res){
-    if (err || !res.length) return cb([])
-    res = res.replace(/^\s+|\s+$/g,'').split(/\n/)
-    cb(err ? [] : res)
-  })
-}
 
-var create = function(tagname, cb) {
-  exec('git tag '+ tagname, function(err){
-    cb(null, tagname + ' is created.')
-  })
-}
+module.exports = function(options) {
 
-module.exports = function() {  
-  var tags = []
+  var get = function(cb) {
+    var cmd = 'git tag -l'
+    if (!options.localOnly) {
+      cmd = 'git pull origin --tags; ' + cmd
+    }
+    exec(cmd, function(err, res){
+      if (err) console.warn('WARN: ' + err)
+      if (err || !res.length) return cb([])
+      res = res.replace(/^\s+|\s+$/g,'').split(/\n/)
+      cb(err ? [] : res)
+    })
+  }
+
+  var create = function(name, msg, cb) {
+    msg = typeof msg === 'string' ? msg : ''
+    var cmd = 'git tag -a ' + name + ' -m "' + msg + '"'
+    if (!options.localOnly) {
+      cmd += '; git push --tags'
+    }
+    exec(cmd, function(err){
+      if (err) console.warn('WARN: ' + err)
+      cb(name)
+    })
+  }
+
+  var remove = function(name, cb) {
+    var cmd = 'git tag -d ' + name
+    if (!options.localOnly) {
+      cmd += '; git push origin :refs/tags/' + name
+    }
+    exec(cmd, function(err){
+      if (err) console.warn('WARN: ' + err)
+      cb(name)
+    })
+  }
+
   var Tag = {
     create: create,
-    all: function(cb) {
-      if (tags.length) return cb(tags)
-      getTags(function(res){
-        tags = res
-        cb(tags)
-      })
-    },
+    remove: remove,
+    all: get,
     latest: function(cb) {
-      var len = tags.length
-      if (len) return cb(tags[len-1])
-      getTags(function(res){
-        tags = res
-        cb(tags[tags.length-1])
+      get(function(res){
+        cb(res.pop())
       })
     }
   }
