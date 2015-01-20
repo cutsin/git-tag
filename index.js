@@ -23,7 +23,7 @@ module.exports = function(options) {
     msg = typeof msg === 'string' ? msg : ''
     var cmd = 'git tag -a ' + name + ' -m "' + msg + '"'
     if (!options.localOnly) {
-      cmd += '; git push --tags'
+      cmd += '; git push origin --tags'
     }
     exec(cmd, function(err){
       if (err) console.warn('WARN: ' + err)
