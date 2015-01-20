@@ -5,6 +5,7 @@ var exec = require('child_process').exec
 
 
 module.exports = function(options) {
+  options = options ? options : {}
 
   var get = function(cb) {
     var cmd = 'git tag -l'
