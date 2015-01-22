@@ -2,6 +2,7 @@
 
 var fs = require('fs')
 var exec = require('child_process').exec
+var semver = require('semver')
 
 
 module.exports = function(options) {
@@ -15,7 +16,7 @@ module.exports = function(options) {
     exec(cmd, function(err, res){
       if (err) console.warn('WARN: ' + err)
       if (err || !res.length) return cb([])
-      res = res.replace(/^\s+|\s+$/g,'').split(/\n/)
+      res = res.replace(/^\s+|\s+$/g,'').split(/\n/).sort(semver.compare)
       cb(err ? [] : res)
     })
   }
