@@ -18,10 +18,10 @@ var gitTag = require('git-tag')({localOnly:true})
 ### Create a tag
 
 ```javascript
-gitTag.create('0.0.2015', 'just a message',function(res){
+gitTag.create('0.0.2015', 'just a message', function(res){
 	console.log(res) // >> 0.0.2015
 })
-gitTag.create('0.0.2015', 'just a message',function(err, res){
+gitTag.create('0.0.2015', 'just a message', function(err, res){
 	console.log(err, res) // >> null, 0.0.2015
 })
 ```
