@@ -13,25 +13,49 @@ npm install git-tag
 
 ```javascript
 var gitTag = require('git-tag')({localOnly:true})
+```
 
-// create a tag
+### Create a tag
+
+```javascript
 gitTag.create('0.0.2015', 'just a message',function(res){
 	console.log(res) // >> 0.0.2015
 })
+gitTag.create('0.0.2015', 'just a message',function(err, res){
+	console.log(err, res) // >> null, 0.0.2015
+})
+```
 
-// remove a tag
+### Remove a tag
+
+```javascript
 gitTag.remove('0.0.2015', function(res){
 	console.log(res) // >> 0.0.2015
 })
+gitTag.remove('0.0.2015', function(err, res){
+	console.log(err, res) // >> null, 0.0.2015
+})
+```
 
-// get a latest tag
+### Get a latest tag
+
+```javascript
 gitTag.latest(function(res){
 	console.log(res) // >> 0.0.2015
 })
+gitTag.latest(function(err, res){
+	console.log(err, res) // >> null, 0.0.2015
+})
+```
 
-// get all tags
+### Get all tags
+
+```javascript
 gitTag.all(function(res){
 	console.log(res) // >> ['0.0.2015']
+})
+gitTag.all(function(err, res){
+	console.log(err, res) // >> null, ['0.0.2015']
 })
 ```
 

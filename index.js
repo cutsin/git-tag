@@ -4,6 +4,10 @@ var fs = require('fs')
 var exec = require('child_process').exec
 var semver = require('semver')
 
+var callback = function(cb, err, res) {
+  if (typeof cb !== 'function') return
+  cb.length === 2 ? cb(err, res) : cb(res)
+}
 
 module.exports = function(options) {
   options = options || {}
@@ -14,13 +18,12 @@ module.exports = function(options) {
       cmd = 'git pull origin --tags; ' + cmd
     }
     exec(cmd, function(err, res){
-      if (err) console.warn('WARN: ' + err)
-      if (err || !res.length) return cb([])
+      if (err) return callback(cb, err, [])
       res = res.replace(/^\s+|\s+$/g,'').split(/\n/)
-      try{
+      try {
         res = res.sort(semver.compare)
       } catch(e) {}
-      cb(err ? [] : res)
+      callback(cb, err, res)
     })
   }
 
@@ -31,8 +34,7 @@ module.exports = function(options) {
       cmd += '; git push origin --tags'
     }
     exec(cmd, function(err){
-      if (err) console.warn('WARN: ' + err)
-      cb(name)
+      callback(cb, err, name)
     })
   }
 
@@ -42,8 +44,7 @@ module.exports = function(options) {
       cmd += '; git push origin :refs/tags/' + name
     }
     exec(cmd, function(err){
-      if (err) console.warn('WARN: ' + err)
-      cb(name)
+      callback(cb, err, name)
     })
   }
 
@@ -52,8 +53,9 @@ module.exports = function(options) {
     remove: remove,
     all: get,
     latest: function(cb) {
-      get(function(res){
-        cb(res.pop())
+      get(function(err, res){
+        if (err) return callback(cb, err, res)
+        callback(cb, err, res.pop())
       })
     }
   }
