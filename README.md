@@ -12,7 +12,7 @@ npm install git-tag
 ## Usage
 
 ```javascript
-var gitTag = require('git-tag')({localOnly:true})
+var gitTag = require('git-tag')({localOnly:true,dir:'/path/to/git/.git'})
 ```
 
 ### Create a tag

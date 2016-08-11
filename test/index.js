@@ -1,5 +1,5 @@
 var assert = require('assert')
-var gitTag = require('../')({localOnly:true})
+var gitTag = require('../')({localOnly:true,dir:'../.git'})
 var async = require('async')
 
 console.log('test start...')
