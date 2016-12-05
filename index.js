@@ -81,9 +81,8 @@ module.exports = function(options) {
     remove: remove,
     all: get,
     latest: function(cb) {
-      get(function(err, res){
-        if (err) return callback(cb, err, res)
-        callback(cb, err, res.pop())
+      exec('git describe --abbrev=0 --tags', function(err, res){
+        callback(cb, err, res.trim())
       })
     }
   }
