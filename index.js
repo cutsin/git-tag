@@ -36,6 +36,30 @@ module.exports = function(options) {
     })
   }
 
+  var getWithArgs = function (args, cb) {
+
+    if (options.dir) {
+      var cmd = 'git -C ' + options.dir + ' tag -l ' + args
+    } else {
+      var cmd = 'git tag -l ' + args
+    }
+    if (!options.localOnly) {
+      if (options.dir) {
+        cmd = 'git -C ' + options.dir + ' pull origin --tags; ' + cmd
+      } else {
+        cmd = 'git pull origin --tags; ' + cmd
+      }
+    }
+    exec(cmd, function (err, res) {
+      if (err) return callback(cb, err, [])
+      res = res.replace(/^\s+|\s+$/g, '').split(/\n/)
+      try {
+        res = res.sort(semver.compare)
+      } catch (e) { }
+      callback(cb, err, res)
+    })
+  }
+
   var create = function(name, msg, cb) {
     msg = typeof msg === 'string' ? msg : ''
     
@@ -80,6 +104,7 @@ module.exports = function(options) {
     create: create,
     remove: remove,
     all: get,
+    allWithArgs: getWithArgs,
     latest: function(cb) {
       exec('git describe --abbrev=0 --tags', function(err, res){
         callback(cb, err, res.trim())
