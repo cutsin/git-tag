@@ -28,16 +28,16 @@ async.series([
 			next()
 		})
 	},
-	// get allWithArgs tags
+	// get all tags with correct argument
   function (next) {
-    gitTag.allWithArgs("--merge", function (res) {
+    gitTag.all("--merge", function (res) {
       assert.ok(toString.apply(res) === '[object Array]')
       next()
     })
   },
-  // get allWithArgs tags
+  // get all tags with incorrect argument
   function (next) {
-    gitTag.allWithArgs("--foobar", function (err, res) {
+    gitTag.all("--foobar", function (err, res) {
       assert.ok(err)
       next()
     })
@@ -68,7 +68,7 @@ async.series([
 	},
 	// get latest tag
 	function(next) {
-		gitTag.latest(function(res){
+    gitTag.latest(function (res) {
 			assert.ok(res === tagname)
 			next()
 		})

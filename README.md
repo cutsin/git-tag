@@ -54,10 +54,7 @@ gitTag.latest(function(err, res){
 gitTag.all(function(res){
 	console.log(res) // >> ['0.0.2015']
 })
-gitTag.all(function(err, res){
-	console.log(err, res) // >> null, ['0.0.2015']
-})
-gitTag.allWithArgs("--merged", function(err, res){
+gitTag.all("--merged", function(err, res){
 	console.log(err, res) // >> null, ['0.0.2015']
 })
 ```

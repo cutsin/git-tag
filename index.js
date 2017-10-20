@@ -12,32 +12,15 @@ var callback = function(cb, err, res) {
 module.exports = function(options) {
   options = options || {}
 
-  var get = function(cb) {
-    
-    if (options.dir) {
-      var cmd = 'git -C '+options.dir+' tag -l'
-    }else{
-      var cmd = 'git tag -l'
+  var get = function () {
+    var cb;
+    var args = "";
+    if (arguments.length <= 1) {
+      cb = arguments[0];
+    } else {
+      cb = arguments[1];
+      args = arguments[0];
     }
-    if (!options.localOnly) {
-      if (options.dir) {
-        cmd = 'git -C '+options.dir+' pull origin --tags; ' + cmd
-      }else{
-        cmd = 'git pull origin --tags; ' + cmd
-      }
-    }
-    exec(cmd, function(err, res){
-      if (err) return callback(cb, err, [])
-      res = res.replace(/^\s+|\s+$/g,'').split(/\n/)
-      try {
-        res = res.sort(semver.compare)
-      } catch(e) {}
-      callback(cb, err, res)
-    })
-  }
-
-  var getWithArgs = function (args, cb) {
-
     if (options.dir) {
       var cmd = 'git -C ' + options.dir + ' tag -l ' + args
     } else {
@@ -45,9 +28,9 @@ module.exports = function(options) {
     }
     if (!options.localOnly) {
       if (options.dir) {
-        cmd = 'git -C ' + options.dir + ' pull origin --tags; ' + cmd
+        cmd = 'git -C ' + options.dir + ' pull origin --tags ' + args + ";" + cmd
       } else {
-        cmd = 'git pull origin --tags; ' + cmd
+        cmd = 'git pull origin --tags ' + args + ";" + cmd
       }
     }
     exec(cmd, function (err, res) {
@@ -104,7 +87,6 @@ module.exports = function(options) {
     create: create,
     remove: remove,
     all: get,
-    allWithArgs: getWithArgs,
     latest: function(cb) {
       exec('git describe --abbrev=0 --tags', function(err, res){
         callback(cb, err, res.trim())
