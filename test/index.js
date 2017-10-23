@@ -1,5 +1,5 @@
 var assert = require('assert')
-var gitTag = require('../')({localOnly:true,dir:'../.git'})
+var gitTag = require('../')({localOnly:true,dir:'.git'})
 var async = require('async')
 
 console.log('test start...')
@@ -28,9 +28,23 @@ async.series([
 			next()
 		})
 	},
+	// get all tags with correct argument
+  function (next) {
+    gitTag.all("--merge", function (res) {
+      assert.ok(toString.apply(res) === '[object Array]')
+      next()
+    })
+  },
+  // get all tags with incorrect argument
+  function (next) {
+    gitTag.all("--foobar", function (err, res) {
+      assert.ok(err)
+      next()
+    })
+  },
 	// get all tags with 2 args
 	function(next) {
-		gitTag.all(function(err, res){
+    gitTag.all(function (err, res) {
 			assert.ok(!err)
 			assert.ok(toString.apply(res) === '[object Array]')
 			next()
@@ -38,9 +52,9 @@ async.series([
 	},
 	// get latest tag with 2 args
 	function(next) {
-		gitTag.latest(function(err, res){
+    gitTag.latest(function (err, res) {
 			assert.ok(!err)
-			assert.ok(res === invalidTag)
+			assert.ok(res === tagname)
 			next()
 		})
 	},
@@ -54,7 +68,7 @@ async.series([
 	},
 	// get latest tag
 	function(next) {
-		gitTag.latest(function(res){
+    gitTag.latest(function (res) {
 			assert.ok(res === tagname)
 			next()
 		})

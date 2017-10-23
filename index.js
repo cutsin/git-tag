@@ -12,26 +12,33 @@ var callback = function(cb, err, res) {
 module.exports = function(options) {
   options = options || {}
 
-  var get = function(cb) {
-    
+  var get = function () {
+    var cb;
+    var args = "";
+    if (arguments.length <= 1) {
+      cb = arguments[0];
+    } else {
+      cb = arguments[1];
+      args = arguments[0];
+    }
     if (options.dir) {
-      var cmd = 'git -C '+options.dir+' tag -l'
-    }else{
-      var cmd = 'git tag -l'
+      var cmd = 'git -C ' + options.dir + ' tag -l ' + args
+    } else {
+      var cmd = 'git tag -l ' + args
     }
     if (!options.localOnly) {
       if (options.dir) {
-        cmd = 'git -C '+options.dir+' pull origin --tags; ' + cmd
-      }else{
-        cmd = 'git pull origin --tags; ' + cmd
+        cmd = 'git -C ' + options.dir + ' pull origin --tags ' + args + ";" + cmd
+      } else {
+        cmd = 'git pull origin --tags ' + args + ";" + cmd
       }
     }
-    exec(cmd, function(err, res){
+    exec(cmd, function (err, res) {
       if (err) return callback(cb, err, [])
-      res = res.replace(/^\s+|\s+$/g,'').split(/\n/)
+      res = res.replace(/^\s+|\s+$/g, '').split(/\n/)
       try {
         res = res.sort(semver.compare)
-      } catch(e) {}
+      } catch (e) { }
       callback(cb, err, res)
     })
   }
