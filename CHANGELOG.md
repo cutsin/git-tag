@@ -2,7 +2,7 @@
 
 Notes:
 
-- An update of the dependencies is performed to eliminate security alerts.
+- An update of the dependencies is performed to eliminate security alerts [Pull request #8](https://github.com/cutsin/git-tag/pull/8).
 
 ### Issue
 
