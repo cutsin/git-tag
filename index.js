@@ -1,16 +1,15 @@
 // git-tag
 
-var fs = require('fs')
-var exec = require('child_process').exec
-var semver = require('semver')
+var exec = require("child_process").exec;
+var semver = require("semver");
 
-var callback = function(cb, err, res) {
-  if (typeof cb !== 'function') return
-  cb.length === 2 ? cb(err, res) : cb(res)
-}
+var callback = function (cb, err, res) {
+  if (typeof cb !== "function") return;
+  cb.length === 2 ? cb(err, res) : cb(res);
+};
 
-module.exports = function(options) {
-  options = options || {}
+module.exports = function (options) {
+  options = options || {};
 
   var get = function () {
     var cb;
@@ -22,76 +21,76 @@ module.exports = function(options) {
       args = arguments[0];
     }
     if (options.dir) {
-      var cmd = 'git -C ' + options.dir + ' tag -l ' + args
+      var cmd = "git -C " + options.dir + " tag -l " + args;
     } else {
-      var cmd = 'git tag -l ' + args
+      var cmd = "git tag -l " + args;
     }
     if (!options.localOnly) {
       if (options.dir) {
-        cmd = 'git -C ' + options.dir + ' pull origin --tags ' + args + ";" + cmd
+        cmd =
+          "git -C " + options.dir + " pull origin --tags " + args + ";" + cmd;
       } else {
-        cmd = 'git pull origin --tags ' + args + ";" + cmd
+        cmd = "git pull origin --tags " + args + ";" + cmd;
       }
     }
     exec(cmd, function (err, res) {
-      if (err) return callback(cb, err, [])
-      res = res.replace(/^\s+|\s+$/g, '').split(/\n/)
+      if (err) return callback(cb, err, []);
+      res = res.replace(/^\s+|\s+$/g, "").split(/\n/);
       try {
-        res = res.sort(semver.compare)
-      } catch (e) { }
-      callback(cb, err, res)
-    })
-  }
+        res = res.sort(semver.compare);
+      } catch (e) {}
+      callback(cb, err, res);
+    });
+  };
 
-  var create = function(name, msg, cb) {
-    msg = typeof msg === 'string' ? msg : ''
-    
-    if (options.dir) {
-      var cmd = 'git -C '+options.dir+' tag -a ' + name + ' -m "' + msg + '"'
-    }else{
-      var cmd = 'git tag -a ' + name + ' -m "' + msg + '"'
-    }
-    if (!options.localOnly) {
-      
-      if (options.dir) {
-        cmd += '; git -C '+options.dir+' push origin --tags'
-      }else{
-        cmd += '; git push origin --tags'
-      }  
-    }
-    exec(cmd, function(err){
-      callback(cb, err, name)
-    })
-  }
+  var create = function (name, msg, cb) {
+    msg = typeof msg === "string" ? msg : "";
 
-  var remove = function(name, cb) {
-    
     if (options.dir) {
-      var cmd = 'git -C '+options.dir+' tag -d ' + name
-    }else{
-      var cmd = 'git tag -d ' + name
+      var cmd =
+        "git -C " + options.dir + " tag -a " + name + ' -m "' + msg + '"';
+    } else {
+      var cmd = "git tag -a " + name + ' -m "' + msg + '"';
     }
     if (!options.localOnly) {
       if (options.dir) {
-        cmd += '; git -C '+options.dir+' push origin :refs/tags/' + name
-      }else{
-        cmd += '; git push origin :refs/tags/' + name
+        cmd += "; git -C " + options.dir + " push origin --tags";
+      } else {
+        cmd += "; git push origin --tags";
       }
     }
-    exec(cmd, function(err){
-      callback(cb, err, name)
-    })
-  }
+    exec(cmd, function (err) {
+      callback(cb, err, name);
+    });
+  };
+
+  var remove = function (name, cb) {
+    if (options.dir) {
+      var cmd = "git -C " + options.dir + " tag -d " + name;
+    } else {
+      var cmd = "git tag -d " + name;
+    }
+    if (!options.localOnly) {
+      if (options.dir) {
+        cmd += "; git -C " + options.dir + " push origin :refs/tags/" + name;
+      } else {
+        cmd += "; git push origin :refs/tags/" + name;
+      }
+    }
+    exec(cmd, function (err) {
+      callback(cb, err, name);
+    });
+  };
 
   var Tag = {
     create: create,
     remove: remove,
     all: get,
-    latest: function(cb) {
-      exec('git describe --abbrev=0 --tags', function(err, res){
-        callback(cb, err, res.trim())
-      })
+    latest: function (cb) {
+      exec("git describe --abbrev=0 --tags", function (err, res) {
+        callback(cb, err, res.trim());
+      });
     }
-  }
-  return Tag
-}
+  };
+  return Tag;
+};
